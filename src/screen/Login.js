@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Image} from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {login} from '../redux/actions/API';
 
 import {
   Alert,
@@ -17,7 +18,7 @@ import {
 //import NfcManager, { Ndef } from "react-native-nfc-manager";
 //import {startNFC, stopNFC, registerTagEvent} from '../components/NfcHelper';
 import AsyncStorage from '@react-native-community/async-storage';
-import { LoginButton, AccessToken } from 'react-native-fbsdk';
+import {LoginButton, AccessToken, LoginManager} from 'react-native-fbsdk';
 
 //const IS_IOS = Platform.OS === 'ios';
 const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
@@ -87,23 +88,27 @@ class Login extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.logincontainer}>
-        <LoginButton
-          onLoginFinished={
-            (error, result) => {
+          <LoginButton
+            publishPermissions={['email']}
+            onLoginFinished={(error, result) => {
               if (error) {
-                console.log("login has error: " + result.error);
+                console.log('login has error: ' + result.error);
               } else if (result.isCancelled) {
-                console.log("login is cancelled.");
+                console.log('login is cancelled.');
               } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    console.log(data.accessToken.toString())
-                  }
-                )
+                AccessToken.getCurrentAccessToken().then(data => {
+                  this.props.login(
+                    '',
+                    '',
+                    this.props.navigation,
+                    'facebook',
+                    data.accessToken.toString(),
+                  );
+                });
               }
-            }
-          }
-          onLogoutFinished={() => console.log("logout.")}/>
+            }}
+            onLogoutFinished={() => console.log('logout.')}
+          />
           <Text>{'strings.login_email'}</Text>
           <TextInput
             editable
@@ -195,6 +200,6 @@ const stateToProps = state => ({
   state: state.state,
 });
 
-const dispatchToProps = dispatch => bindActionCreators({}, dispatch);
+const dispatchToProps = dispatch => bindActionCreators({login}, dispatch);
 
 export default connect(stateToProps, dispatchToProps)(Login);

@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
 
-import state from './state';
+import api from './API';
 
 const rootReducer = combineReducers({
-	state,
+	api,
 });
 
 export default rootReducer

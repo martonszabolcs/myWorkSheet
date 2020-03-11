@@ -20,7 +20,7 @@ export const initialState = {
   emailerror: '',
 };
 
-const state = (state = initialState, action) => {
+const api = (state = initialState, action) => {
   switch (action.type) {
     // state
     case 'SET_LANGUAGE':
@@ -185,4 +185,4 @@ const state = (state = initialState, action) => {
   }
 };
 
-export default state;
+export default api;
